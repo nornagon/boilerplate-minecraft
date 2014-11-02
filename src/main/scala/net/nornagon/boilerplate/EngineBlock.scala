@@ -40,7 +40,7 @@ class EngineBlock(val pressure: Int) extends BlockContainer(Material.wood) {
     super.onBlockAdded(world, x, y, z)
   }
 
-  def createNewTileEntity(p_149915_1_ : World, p_149915_2_ : Int): TileEntity = {
+  def createNewTileEntity(world: World, arg: Int): TileEntity = {
     println("hi new tile entity")
     new EngineTile
   }

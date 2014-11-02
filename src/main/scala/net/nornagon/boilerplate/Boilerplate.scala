@@ -1,13 +1,14 @@
 package net.nornagon.boilerplate
 
-import cpw.mods.fml.common.{FMLCommonHandler, Mod}
 import cpw.mods.fml.common.Mod.EventHandler
-import cpw.mods.fml.common.event.{FMLInitializationEvent, FMLPostInitializationEvent}
+import cpw.mods.fml.common.event.{FMLInitializationEvent, FMLPostInitializationEvent, FMLServerStartingEvent}
 import cpw.mods.fml.common.eventhandler.SubscribeEvent
 import cpw.mods.fml.common.gameevent.TickEvent
 import cpw.mods.fml.common.registry.GameRegistry
+import cpw.mods.fml.common.{FMLCommonHandler, Mod}
 import cpw.mods.fml.relauncher.Side
 import net.minecraft.block.Block
+
 import scala.collection.mutable
 
 @Mod(modid = "boilerplate", version = "1.0", modLanguage = "scala") object Boilerplate {
@@ -32,9 +33,18 @@ import scala.collection.mutable
     FMLCommonHandler.instance.bus.register(new TickHandler)
   }
 
+  @EventHandler def onServerStart(event: FMLServerStartingEvent) = {
+    println("Clearing boilerplate state")
+    activeShuttles.clear()
+    activeEngines.clear()
+  }
+
   private val activeShuttles = mutable.Set.empty[ShuttleTile]
   private val activeEngines = mutable.Set.empty[EngineTile]
 
+  def unscheduleShuttleTick(t: ShuttleTile) = {
+    activeShuttles -= t
+  }
   def scheduleShuttleTick(t: ShuttleTile) = {
     activeShuttles += t
   }
