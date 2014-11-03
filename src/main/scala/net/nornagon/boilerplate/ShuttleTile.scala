@@ -41,11 +41,11 @@ class ShuttleTile extends TileEntity {
   def tryMove(ss: mutable.Set[Coord], dx: Int, dy: Int, dz: Int): Boolean = {
     for ((x,y,z) <- ss) {
       val b = worldObj.getBlock(x + dx, y + dy, z + dz)
-      if (!ss.contains((x + dx, y + dy, z + dz)) && !b.isInstanceOf[PipeBlock])
+      if (!ss.contains((x + dx, y + dy, z + dz)) && !PhysicalProperties.canShuttlePass(b))
         return false
     }
     for ((x,y,z) <- ss) {
-      worldObj.setBlock(x,y,z, Boilerplate.pipeBlock)
+      worldObj.setBlock(x,y,z, Boilerplate.nothingBlock)
     }
     for ((x,y,z) <- ss) {
       worldObj.setBlock(x+dx, y+dy, z+dz, Boilerplate.shuttleBlock)

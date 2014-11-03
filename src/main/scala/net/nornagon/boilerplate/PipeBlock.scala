@@ -8,9 +8,9 @@ import net.minecraft.creativetab.CreativeTabs
 import net.minecraft.world.IBlockAccess
 import net.minecraft.world.World
 
-class PipeBlock extends Block(Material.wood) {
+class PipeBlock(override val canShuttlePass: Boolean) extends Block(Material.wood) with PhysicalProperties {
   setCreativeTab(CreativeTabs.tabBlock)
-  setBlockName("pipe")
+//  setBlockName("pipe")
 
   /**
    * Returns which pass should this block be rendered on. 0 for solids and 1 for alpha

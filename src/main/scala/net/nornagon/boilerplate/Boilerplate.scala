@@ -12,7 +12,8 @@ import net.minecraft.block.Block
 import scala.collection.mutable
 
 @Mod(modid = "boilerplate", version = "1.0", modLanguage = "scala") object Boilerplate {
-  val pipeBlock = new PipeBlock
+  val nothingBlock = new PipeBlock(true)
+  val thinSolidBlock = new PipeBlock(false)
   val posEngineBlock = new EngineBlock(1)
   val negEngineBlock = new EngineBlock(-1)
   val shuttleBlock = new ShuttleBlock
@@ -21,7 +22,8 @@ import scala.collection.mutable
   }
   @EventHandler def init(event: FMLInitializationEvent) {
     System.out.println("Boilerplate loaded.")
-    addBlock(pipeBlock.setBlockTextureName("boilerplate:glass").setHardness(0.5f))
+    addBlock(nothingBlock.setBlockTextureName("boilerplate:glass").setHardness(0.5f).setBlockName("nothing"))
+    addBlock(thinSolidBlock.setBlockTextureName("boilerplate:glass_gray").setHardness(0.5f).setBlockName("thinsolid"))
     addBlock(posEngineBlock.setBlockTextureName("boilerplate:glass_green").setHardness(0.5f).setBlockName("pos_engine"))
     addBlock(negEngineBlock.setBlockTextureName("boilerplate:glass_red").setHardness(0.5f).setBlockName("neg_engine"))
     addBlock(shuttleBlock.setBlockTextureName("boilerplate:glass_magenta").setHardness(0.5f))
