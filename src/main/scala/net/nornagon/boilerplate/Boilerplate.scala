@@ -1,12 +1,13 @@
 package net.nornagon.boilerplate
 
+import cpw.mods.fml.client.registry.ClientRegistry
 import cpw.mods.fml.common.Mod.EventHandler
 import cpw.mods.fml.common.event.{FMLInitializationEvent, FMLPostInitializationEvent, FMLServerStartingEvent}
 import cpw.mods.fml.common.eventhandler.SubscribeEvent
 import cpw.mods.fml.common.gameevent.TickEvent
 import cpw.mods.fml.common.registry.GameRegistry
 import cpw.mods.fml.common.{FMLCommonHandler, Mod}
-import cpw.mods.fml.relauncher.Side
+import cpw.mods.fml.relauncher.{Side, SideOnly}
 import net.minecraft.block.Block
 
 import scala.collection.mutable
@@ -29,6 +30,7 @@ import scala.collection.mutable
     addBlock(shuttleBlock.setBlockTextureName("boilerplate:glass_magenta").setHardness(0.5f))
     GameRegistry.registerTileEntity(classOf[EngineTile], "bp_engine")
     GameRegistry.registerTileEntity(classOf[ShuttleTile], "bp_shuttle")
+    GameRegistry.registerTileEntity(classOf[PipeTile], "bp_pipe")
   }
   @EventHandler def postInit(event: FMLPostInitializationEvent) {
     System.out.println("Boilerplate post init.")
@@ -39,6 +41,13 @@ import scala.collection.mutable
     println("Clearing boilerplate state")
     activeShuttles.clear()
     activeEngines.clear()
+  }
+
+  @EventHandler
+  @SideOnly(Side.CLIENT)
+  def registerClientThings(event: FMLInitializationEvent) = {
+    val tesr = new PipeTESR
+    ClientRegistry.bindTileEntitySpecialRenderer(classOf[PipeTile], tesr)
   }
 
   private val activeShuttles = mutable.Set.empty[ShuttleTile]

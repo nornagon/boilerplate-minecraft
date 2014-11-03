@@ -2,15 +2,16 @@ package net.nornagon.boilerplate
 
 import cpw.mods.fml.relauncher.Side
 import cpw.mods.fml.relauncher.SideOnly
-import net.minecraft.block.Block
+import net.minecraft.block.{BlockContainer, Block}
 import net.minecraft.block.material.Material
 import net.minecraft.creativetab.CreativeTabs
+import net.minecraft.tileentity.TileEntity
 import net.minecraft.world.IBlockAccess
 import net.minecraft.world.World
 
-class PipeBlock(override val canShuttlePass: Boolean) extends Block(Material.wood) with PhysicalProperties {
+class PipeBlock(override val canShuttlePass: Boolean) extends BlockContainer(Material.wood) with PhysicalProperties {
   setCreativeTab(CreativeTabs.tabBlock)
-//  setBlockName("pipe")
+  override def canAirPass = true
 
   /**
    * Returns which pass should this block be rendered on. 0 for solids and 1 for alpha
@@ -39,4 +40,6 @@ class PipeBlock(override val canShuttlePass: Boolean) extends Block(Material.woo
   override def onBlockAdded(world: World, x: Int, y: Int, z: Int) {
     super.onBlockAdded(world, x, y, z)
   }
+
+  override def createNewTileEntity(p_149915_1_ : World, p_149915_2_ : Int): TileEntity = new PipeTile
 }
