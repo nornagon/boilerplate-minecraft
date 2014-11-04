@@ -17,7 +17,6 @@ import scala.collection.mutable
   val thinSolidBlock = new PipeBlock(false)
   val posEngineBlock = new EngineBlock(1)
   val negEngineBlock = new EngineBlock(-1)
-  val shuttleBlock = new ShuttleBlock
   val pipeWrench = new PipeWrench
   pipeWrench.setUnlocalizedName("bp_wrench")
   def addBlock(b: Block) = {
@@ -29,9 +28,7 @@ import scala.collection.mutable
     addBlock(thinSolidBlock.setBlockTextureName("boilerplate:glass_gray").setHardness(0.5f).setBlockName("thinsolid"))
     addBlock(posEngineBlock.setBlockTextureName("boilerplate:glass_green").setHardness(0.5f).setBlockName("pos_engine"))
     addBlock(negEngineBlock.setBlockTextureName("boilerplate:glass_red").setHardness(0.5f).setBlockName("neg_engine"))
-    addBlock(shuttleBlock.setBlockTextureName("boilerplate:glass_magenta").setHardness(0.5f))
     GameRegistry.registerTileEntity(classOf[EngineTile], "bp_engine")
-    GameRegistry.registerTileEntity(classOf[ShuttleTile], "bp_shuttle")
     GameRegistry.registerTileEntity(classOf[PipeTile], "bp_pipe")
     GameRegistry.registerItem(pipeWrench.setTextureName("boilerplate:bp_wrench"), "bp_wrench")
   }
@@ -53,13 +50,13 @@ import scala.collection.mutable
     ClientRegistry.bindTileEntitySpecialRenderer(classOf[PipeTile], tesr)
   }
 
-  private val activeShuttles = mutable.Set.empty[ShuttleTile]
+  private val activeShuttles = mutable.Set.empty[PipeTile]
   private val activeEngines = mutable.Set.empty[EngineTile]
 
-  def unscheduleShuttleTick(t: ShuttleTile) = {
+  def unscheduleShuttleTick(t: PipeTile) = {
     activeShuttles -= t
   }
-  def scheduleShuttleTick(t: ShuttleTile) = {
+  def scheduleShuttleTick(t: PipeTile) = {
     activeShuttles += t
   }
   def scheduleEngineTick(e: EngineTile) = {
