@@ -17,19 +17,36 @@ class PipeTESR extends TileEntitySpecialRenderer {
     RenderHelper.disableStandardItemLighting()
 
     tessellator.startDrawingQuads()
-    tessellator.setTranslation(
-      (x.toFloat - e.xCoord.toFloat + 0).toDouble,
-      (y.toFloat - e.yCoord.toFloat + 0.4f).toDouble,
-      (z.toFloat - e.zCoord.toFloat + 0).toDouble
-    )
 
     tessellator.setColorOpaque_F(1.0F, 1.0F, 1.0F)
 
-    this.renderBlocks.overrideBlockBounds(0.1, 0.1, 0.1, 0.9, 0.9, 0.9)
-    this.renderBlocks.renderBlockAllFaces(Blocks.dirt, e.xCoord, e.yCoord, e.zCoord)
-    this.renderBlocks.unlockBlockBounds()
+    val block = Blocks.dirt
 
-    tessellator.setTranslation(0.0D, 0.0D, 0.0D)
+    // Cribbed from RenderBlocks.renderStandardBlockWithColorMultiplier
+    val lightBottom = 0.5F
+    val lightTop = 1.0F
+    val lightEastWest = 0.8F
+    val lightNorthSouth = 0.6F
+
+    val brightness = block.getMixedBrightnessForBlock(e.getWorldObj, e.xCoord, e.yCoord, e.zCoord)
+
+    tessellator.setBrightness(brightness)
+    renderBlocks.setRenderBounds(0.1, 0.1, 0.1, 0.9, 0.9, 0.9)
+
+    tessellator.setColorOpaque_F(lightBottom, lightBottom, lightBottom)
+    renderBlocks.renderFaceYNeg(block, x, y, z, block.getBlockTextureFromSide(0))
+
+    tessellator.setColorOpaque_F(lightTop, lightTop, lightTop)
+    renderBlocks.renderFaceYPos(block, x, y, z, block.getBlockTextureFromSide(1))
+
+    tessellator.setColorOpaque_F(lightEastWest, lightEastWest, lightEastWest)
+    renderBlocks.renderFaceZNeg(block, x, y, z, block.getBlockTextureFromSide(2))
+    renderBlocks.renderFaceZPos(block, x, y, z, block.getBlockTextureFromSide(3))
+
+    tessellator.setColorOpaque_F(lightNorthSouth, lightNorthSouth, lightNorthSouth)
+    renderBlocks.renderFaceXNeg(block, x, y, z, block.getBlockTextureFromSide(4))
+    renderBlocks.renderFaceXPos(block, x, y, z, block.getBlockTextureFromSide(5))
+
     tessellator.draw
 
     RenderHelper.enableStandardItemLighting()
