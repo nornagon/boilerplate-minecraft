@@ -12,6 +12,13 @@ class PipeTESR extends TileEntitySpecialRenderer {
   var renderBlocks: RenderBlocks = null
 
   override def renderTileEntityAt(e: TileEntity, x: Double, y: Double, z: Double, g: Float): Unit = {
+    e match {
+      case pipeEntity: PipeTile =>
+        if (!pipeEntity.hasShuttle)
+          return
+      case _ =>
+        return
+    }
     val tessellator: Tessellator = Tessellator.instance
 
     this.bindTexture(TextureMap.locationBlocksTexture)
@@ -39,7 +46,7 @@ class PipeTESR extends TileEntitySpecialRenderer {
     val world = e.getWorldObj
     val adjacent = (cardinals filter { case (dx, dy, dz) =>
       world.getTileEntity(e.xCoord + dx, e.yCoord + dy, e.zCoord + dz) match {
-        case p: PipeTile => true
+        case p: PipeTile => p.hasShuttle
         case _ => false
       }
     }).toSet
@@ -50,7 +57,6 @@ class PipeTESR extends TileEntitySpecialRenderer {
       else if (dz != 0) { lightEastWest }
       else { lightNorthSouth }
 
-    // draw center
     for ((dx,dy,dz) <- cardinals) {
       if (!adjacent((dx,dy,dz))) {
         val light = lightForD(dx, dy, dz)
