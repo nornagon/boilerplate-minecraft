@@ -15,13 +15,7 @@ class EngineTile extends TileEntity {
     if (!block.isInstanceOf[EngineBlock]) return
     val pressure = block.asInstanceOf[EngineBlock].pressure
     bfsFrom((xCoord, yCoord, zCoord)) { case (x, y, z) =>
-      val block = worldObj.getBlock(x, y, z)
-      val tile = worldObj.getTileEntity(x, y, z)
-      val canAirPass = tile match {
-        case pipe: PipeTile => !pipe.hasShuttle
-        case _ => PhysicalProperties.canAirPass(block)
-      }
-      if (canAirPass || (x == xCoord && y == yCoord && z == zCoord)) {
+      if ((x == xCoord && y == yCoord && z == zCoord) || PhysicalProperties.canAirPass(worldObj, x, y, z)) {
         for ((dx, dy, dz) <- cardinals) {
           val tile = worldObj.getTileEntity(x + dx, y + dy, z + dz)
           tile match {

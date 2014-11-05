@@ -7,15 +7,18 @@ import net.minecraft.tileentity.TileEntity
 
 import scala.collection.mutable
 
-class PipeTile extends TileEntity {
+class PipeTile extends TileEntity with PhysicalProperties {
   var hasShuttle = false
 
-  override def writeToNBT(tag : NBTTagCompound): Unit = {
+  override def canAirPass: Boolean = !hasShuttle
+  override def canShuttlePass: Boolean = !hasShuttle
+
+  override def writeToNBT(tag: NBTTagCompound): Unit = {
     super.writeToNBT(tag)
     tag.setBoolean("hasShuttle", hasShuttle)
   }
 
-  override def readFromNBT(tag : NBTTagCompound): Unit = {
+  override def readFromNBT(tag: NBTTagCompound): Unit = {
     super.readFromNBT(tag)
     hasShuttle = tag.getBoolean("hasShuttle")
   }
@@ -69,7 +72,7 @@ class PipeTile extends TileEntity {
   def tryMove(ss: mutable.Set[Coord], dx: Int, dy: Int, dz: Int): Boolean = {
     for ((x,y,z) <- ss) {
       val b = worldObj.getBlock(x + dx, y + dy, z + dz)
-      if (!ss.contains((x + dx, y + dy, z + dz)) && !PhysicalProperties.canShuttlePass(b))
+      if (!ss.contains((x + dx, y + dy, z + dz)) && !PhysicalProperties.canShuttlePass(worldObj, x+dx, y+dy, z+dz))
         return false
     }
     for ((x,y,z) <- ss) {
