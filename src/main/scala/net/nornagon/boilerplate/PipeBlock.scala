@@ -5,6 +5,7 @@ import cpw.mods.fml.relauncher.SideOnly
 import net.minecraft.block.{BlockContainer, Block}
 import net.minecraft.block.material.Material
 import net.minecraft.creativetab.CreativeTabs
+import net.minecraft.entity.player.EntityPlayer
 import net.minecraft.tileentity.TileEntity
 import net.minecraft.world.IBlockAccess
 import net.minecraft.world.World
@@ -42,4 +43,25 @@ class PipeBlock(override val canShuttlePass: Boolean) extends BlockContainer(Mat
   }
 
   override def createNewTileEntity(world: World, p_149915_2_ : Int): TileEntity = new PipeTile
+
+  override def onBlockActivated(world: World, x: Int, y: Int, z: Int, player: EntityPlayer, arg: Int, fx: Float, fy: Float, fz: Float): Boolean = {
+    val current = player.inventory.getCurrentItem
+    current.getItem match {
+      case _: ShuttleItem =>
+        val tile = world.getTileEntity(x, y, z)
+        tile match {
+          case pipe: PipeTile =>
+            if (!player.capabilities.isCreativeMode) {
+              val consumed = if (current.stackSize > 1)
+                current.splitStack(1)
+              else
+                null
+              player.inventory.setInventorySlotContents(player.inventory.currentItem, consumed)
+            }
+            pipe.hasShuttle = true
+        }
+      case _ =>
+    }
+    false
+  }
 }

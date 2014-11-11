@@ -18,7 +18,11 @@ import scala.collection.mutable
   val posEngineBlock = new EngineBlock(1)
   val negEngineBlock = new EngineBlock(-1)
   val pipeWrench = new PipeWrench
+  val shuttle = new ShuttleItem(thin = false)
+  val thinShuttle = new ShuttleItem(thin = true)
   pipeWrench.setUnlocalizedName("bp_wrench")
+  shuttle.setUnlocalizedName("bp_shuttle")
+  thinShuttle.setUnlocalizedName("bp_thinshuttle")
   def addBlock(b: Block) = {
     GameRegistry.registerBlock(b, b.getUnlocalizedName)
   }
@@ -30,6 +34,8 @@ import scala.collection.mutable
     addBlock(negEngineBlock.setBlockTextureName("boilerplate:engine_neg").setHardness(0.5f).setBlockName("neg_engine"))
     GameRegistry.registerTileEntity(classOf[EngineTile], "bp_engine")
     GameRegistry.registerTileEntity(classOf[PipeTile], "bp_pipe")
+    GameRegistry.registerItem(shuttle.setTextureName("boilerplate:glass_magenta"), "bp_shuttle")
+    GameRegistry.registerItem(thinShuttle.setTextureName("boilerplate:glass_magenta"), "bp_thinshuttle")
     GameRegistry.registerItem(pipeWrench.setTextureName("boilerplate:bp_wrench"), "bp_wrench")
   }
   @EventHandler def postInit(event: FMLPostInitializationEvent) {
