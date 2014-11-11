@@ -7,7 +7,7 @@ computing. It looks like this:
 
 This is a mod to put shuttles and engines into [Minecraft](http://minecraft.net/).
 
-Watch [this YouTube video](https://www.youtube.com/watch?v=MkgQYC7nj7U) for an
+Watch [this YouTube video](https://www.youtube.com/watch?v=pWflJ0JvBdE) for an
 example of what this looks like.
 
 ## Running
