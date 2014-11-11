@@ -41,5 +41,5 @@ class PipeBlock(override val canShuttlePass: Boolean) extends BlockContainer(Mat
     super.onBlockAdded(world, x, y, z)
   }
 
-  override def createNewTileEntity(p_149915_1_ : World, p_149915_2_ : Int): TileEntity = new PipeTile
+  override def createNewTileEntity(world: World, p_149915_2_ : Int): TileEntity = new PipeTile
 }

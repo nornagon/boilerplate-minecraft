@@ -11,7 +11,10 @@ class PipeTile extends TileEntity with PhysicalProperties {
   var hasShuttle = false
 
   override def canAirPass: Boolean = !hasShuttle
-  override def canShuttlePass: Boolean = !hasShuttle
+  override def canShuttlePass: Boolean = {
+    val canShuttlePass = worldObj.getBlock(xCoord, yCoord, zCoord).asInstanceOf[PipeBlock].canShuttlePass
+    canShuttlePass && !hasShuttle
+  }
 
   override def writeToNBT(tag: NBTTagCompound): Unit = {
     super.writeToNBT(tag)
