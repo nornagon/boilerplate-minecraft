@@ -14,7 +14,7 @@ class PipeTESR extends TileEntitySpecialRenderer {
   override def renderTileEntityAt(e: TileEntity, x: Double, y: Double, z: Double, g: Float): Unit = {
     e match {
       case pipeEntity: PipeTile =>
-        if (!pipeEntity.hasShuttle)
+        if (!pipeEntity.shuttle.isDefined)
           return
       case _ =>
         return
@@ -41,12 +41,17 @@ class PipeTESR extends TileEntitySpecialRenderer {
     tessellator.setBrightness(brightness)
     //renderBlocks.setRenderBounds(0.1, 0.1, 0.1, 0.9, 0.9, 0.9)
 
-    val (r, g, b) = (147/255.0f, 40/255.0f, 189/255.0f)
+    val shuttle = e.asInstanceOf[PipeTile].shuttle.get
+    val (r, g, b) = if (shuttle.thin) {
+      (216/255.0f, 135/255.0f, 248/255.0f)
+    } else {
+      (147/255.0f, 40/255.0f, 189/255.0f)
+    }
 
     val world = e.getWorldObj
     val adjacent = (cardinals filter { case (dx, dy, dz) =>
       world.getTileEntity(e.xCoord + dx, e.yCoord + dy, e.zCoord + dz) match {
-        case p: PipeTile => p.hasShuttle
+        case p: PipeTile => p.shuttle.isDefined
         case _ => false
       }
     }).toSet

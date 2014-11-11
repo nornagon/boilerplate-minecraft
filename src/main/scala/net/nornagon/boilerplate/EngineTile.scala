@@ -19,7 +19,7 @@ class EngineTile extends TileEntity {
         for ((dx, dy, dz) <- cardinals) {
           val tile = worldObj.getTileEntity(x + dx, y + dy, z + dz)
           tile match {
-            case pipe: PipeTile if pipe.hasShuttle =>
+            case pipe: PipeTile if pipe.shuttle.isDefined && !pipe.shuttle.get.thin =>
               pipe.addPressure(dx * pressure, dy * pressure, dz * pressure)
             case _ =>
           }

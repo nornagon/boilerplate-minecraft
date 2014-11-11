@@ -8,22 +8,28 @@ import net.minecraft.tileentity.TileEntity
 import scala.collection.mutable
 
 class PipeTile extends TileEntity with PhysicalProperties {
-  var hasShuttle = false
+  var shuttle: Option[Shuttle] = None
 
-  override def canAirPass: Boolean = !hasShuttle
+  override def canAirPass: Boolean = shuttle.isEmpty || shuttle.get.thin
   override def canShuttlePass: Boolean = {
     val canShuttlePass = worldObj.getBlock(xCoord, yCoord, zCoord).asInstanceOf[PipeBlock].canShuttlePass
-    canShuttlePass && !hasShuttle
+    canShuttlePass && shuttle.isEmpty
   }
 
   override def writeToNBT(tag: NBTTagCompound): Unit = {
     super.writeToNBT(tag)
-    tag.setBoolean("hasShuttle", hasShuttle)
+    shuttle foreach { s =>
+      tag.setTag("shuttle", s.asNBT)
+    }
   }
 
   override def readFromNBT(tag: NBTTagCompound): Unit = {
     super.readFromNBT(tag)
-    hasShuttle = tag.getBoolean("hasShuttle")
+    if (tag.hasKey("shuttle")) {
+      shuttle = Some(Shuttle.fromNBT(tag.getTag("shuttle").asInstanceOf[NBTTagCompound]))
+    } else {
+      shuttle = None
+    }
   }
 
   override def getDescriptionPacket = {
@@ -39,7 +45,7 @@ class PipeTile extends TileEntity with PhysicalProperties {
   /// shuttle stuff
   var pressure = (0,0,0)
   def addPressure(dx: Int, dy: Int, dz: Int) = {
-    assert(hasShuttle)
+    assert(shuttle.isDefined)
     pressure = (pressure._1 + dx, pressure._2 + dy, pressure._3 + dz)
     Boilerplate.scheduleShuttleTick(this)
   }
@@ -48,15 +54,19 @@ class PipeTile extends TileEntity with PhysicalProperties {
     var thisTickPressure = pressure
     val adjacentShuttles = mutable.Set((xCoord,yCoord,zCoord))
     bfsFrom(xCoord, yCoord, zCoord) { case c@(x,y,z) =>
-      worldObj.getTileEntity(x, y, z) match {
-        case s: PipeTile if s.hasShuttle =>
-          Boilerplate.unscheduleShuttleTick(s)
-          thisTickPressure = (thisTickPressure._1 + s.pressure._1, thisTickPressure._2 + s.pressure._2, thisTickPressure._3 + s.pressure._3)
-          s.pressure = (0, 0, 0)
-          adjacentShuttles += c
-          true
-        case _ =>
-          false
+      if (c == (xCoord, yCoord, zCoord)) {
+        true
+      } else {
+        worldObj.getTileEntity(x, y, z) match {
+          case s: PipeTile if s.shuttle.isDefined =>
+            Boilerplate.unscheduleShuttleTick(s)
+            thisTickPressure = (thisTickPressure._1 + s.pressure._1, thisTickPressure._2 + s.pressure._2, thisTickPressure._3 + s.pressure._3)
+            s.pressure = (0, 0, 0)
+            adjacentShuttles += c
+            true
+          case _ =>
+            false
+        }
       }
     }
     var moved = false
@@ -74,16 +84,18 @@ class PipeTile extends TileEntity with PhysicalProperties {
 
   def tryMove(ss: mutable.Set[Coord], dx: Int, dy: Int, dz: Int): Boolean = {
     for ((x,y,z) <- ss) {
-      val b = worldObj.getBlock(x + dx, y + dy, z + dz)
       if (!ss.contains((x + dx, y + dy, z + dz)) && !PhysicalProperties.canShuttlePass(worldObj, x+dx, y+dy, z+dz))
         return false
     }
+    val from = mutable.Map.empty[Coord, Shuttle]
     for ((x,y,z) <- ss) {
-      worldObj.getTileEntity(x,y,z).asInstanceOf[PipeTile].hasShuttle = false
+      val pipe = worldObj.getTileEntity(x,y,z).asInstanceOf[PipeTile]
+      from.put((x,y,z), pipe.shuttle.get)
+      pipe.shuttle = None
       worldObj.markBlockForUpdate(x,y,z)
     }
     for ((x,y,z) <- ss) {
-      worldObj.getTileEntity(x + dx, y + dy, z + dz).asInstanceOf[PipeTile].hasShuttle = true
+      worldObj.getTileEntity(x + dx, y + dy, z + dz).asInstanceOf[PipeTile].shuttle = Some(from((x,y,z)))
       worldObj.markBlockForUpdate(x + dx, y + dy, z + dz)
     }
     true

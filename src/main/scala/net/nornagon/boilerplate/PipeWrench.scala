@@ -13,7 +13,7 @@ class PipeWrench extends Item {
   setHarvestLevel("wrench", 0)
 
   override def onItemUseFirst(stack: ItemStack, player: EntityPlayer, world: World, x: Int, y: Int, z: Int, side: Int, hitX: Float, hitY: Float, hitZ: Float): Boolean = {
-    val tile = world.getTileEntity(x, y, z)
+    /*val tile = world.getTileEntity(x, y, z)
     tile match {
       case pipe: PipeTile =>
         if (!world.isRemote) {
@@ -23,7 +23,7 @@ class PipeWrench extends Item {
         player.swingItem()
         return !world.isRemote
       case _ =>
-    }
+    }*/
     false
   }
 }

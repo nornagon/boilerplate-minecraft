@@ -47,7 +47,7 @@ class PipeBlock(override val canShuttlePass: Boolean) extends BlockContainer(Mat
   override def onBlockActivated(world: World, x: Int, y: Int, z: Int, player: EntityPlayer, arg: Int, fx: Float, fy: Float, fz: Float): Boolean = {
     val current = player.inventory.getCurrentItem
     current.getItem match {
-      case _: ShuttleItem =>
+      case si: ShuttleItem =>
         val tile = world.getTileEntity(x, y, z)
         tile match {
           case pipe: PipeTile =>
@@ -58,7 +58,7 @@ class PipeBlock(override val canShuttlePass: Boolean) extends BlockContainer(Mat
                 null
               player.inventory.setInventorySlotContents(player.inventory.currentItem, consumed)
             }
-            pipe.hasShuttle = true
+            pipe.shuttle = Some(si.getShuttle)
         }
       case _ =>
     }

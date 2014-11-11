@@ -7,4 +7,6 @@ class ShuttleItem(val thin: Boolean) extends Item {
   setCreativeTab(CreativeTabs.tabMaterials)
 
   setFull3D()
+
+  def getShuttle = Shuttle(thin)
 }
